@@ -1,72 +1,108 @@
 #include <QApplication>
 #include <QWidget>
-#include <QPushButton>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QComboBox>
+#include <QPushButton>
+#include <QLineEdit>
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
+    // Main Window Setup
     QWidget window;
-    window.setWindowTitle("Gen Ed Course Finder");
-    window.resize(420,250);
+    window.setWindowTitle("Sunshine Scholar");
+    window.setMinimumSize(1000, 800);
+    window.setStyleSheet("background-color: #f0f0f0; font-family: 'Segoe UI', sans-serif;");
 
-    QLabel title("Gen Ed Course Finder");
-    title.setAlignment(Qt::AlignCenter);
+    QVBoxLayout *layout = new QVBoxLayout(&window);
+    layout->setContentsMargins(50, 40, 50, 40);
+    layout->setSpacing(20);
+    layout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
-    QPushButton button("Get Easiest Gen Ed Course");
+    // Global Stylesheet for the "Hand-Drawn" look
+    // 1. Force a global black color and valid font size
+    QString widgetStyle =
+        "* {"
+        "   color: #000000;"          // Deep black for all text
+        "   font-size: 14pt;"         // Use 'pt' to avoid scaling errors
+        "   selection-background-color: #d0d0d0;"
+        "}"
+        "QLabel#Title {"
+        "   font-size: 28pt;"
+        "   font-weight: 800;"        // Extra bold for the "Sunshine Scholar" header
+        "}"
+        "QLabel#Subtitle {"
+        "   font-size: 12pt;"
+        "   color: #1a1a1a;"          // Slightly softer black for readability
+        "}"
+        "QComboBox, QPushButton, QLineEdit {"
+        "   border: 2px solid black;"
+        "   border-radius: 5px;"
+        "   padding: 5px;"
+        "   background: white;"
+        "   min-height: 30px;"
+        "}"
+        "QPushButton:pressed {"
+        "   background-color: #e0e0e0;" // Visual feedback for the click
+        "}"
+        "QLineEdit {"
+        "   border-width: 2px;"       // Matches the "drawn" box thickness
+        "}";
 
-    QLabel resultLabel("Result will appear here");
-    resultLabel.setAlignment(Qt::AlignCenter);
-    resultLabel.setWordWrap(true);
+    app.setStyleSheet(widgetStyle);
 
-    QVBoxLayout layout;
-    layout.setSpacing(20);
-    layout.setContentsMargins(40,30,40,30);
+    // UI Elements
+    QLabel *title = new QLabel("Sunshine Scholar");
+    title->setObjectName("Title");
+    title->setAlignment(Qt::AlignCenter);
 
-    layout.addWidget(&title);
-    layout.addWidget(&button);
-    layout.addWidget(&resultLabel);
+    QLabel *subtitle = new QLabel("Find the most suitable general education course for\nyou across 500 universities in the US");
+    subtitle->setObjectName("Subtitle");
+    subtitle->setAlignment(Qt::AlignCenter);
 
-    window.setLayout(&layout);
+    QComboBox *catCombo = new QComboBox();
+    catCombo->addItem("Choose a Gen Ed category");
 
-    QObject::connect(&button, &QPushButton::clicked, [&]() {
-        resultLabel.setText("University of Florida — Intro to Film Studies");
-    });
+    QComboBox *factorCombo = new QComboBox();
+    factorCombo->addItem("Choose a factor for sorting");
 
-    window.setStyleSheet(R"(
+    QComboBox *methodCombo = new QComboBox();
+    methodCombo->addItem("Choose your sorting method");
 
-        QWidget {
-            background-color: #f5f7fb;
-        }
+    QPushButton *btn = new QPushButton("View top 10 recommendations");
+    btn->setFixedWidth(300);
 
-        QLabel {
-            font-size: 16px;
-            color: #333333;
-        }
+    // Results area
+    QHBoxLayout *resLayout = new QHBoxLayout();
+    QLabel *resLabel = new QLabel("Results");
+    QLineEdit *resEdit = new QLineEdit();
+    resLayout->addWidget(resLabel);
+    resLayout->addWidget(resEdit);
 
-        QPushButton {
-            background-color: #3b82f6;
-            color: white;
-            border-radius: 6px;
-            padding: 6px 12px;
-            font-size: 14px;
-        }
+    // Runtime area
+    QHBoxLayout *runLayout = new QHBoxLayout();
+    QLabel *runLabel = new QLabel("Runtime");
+    QLineEdit *runEdit = new QLineEdit();
+    runEdit->setFixedWidth(150);
+    runLayout->addWidget(runLabel);
+    runLayout->addWidget(runEdit);
+    runLayout->addStretch();
 
-        QPushButton:hover {
-            background-color: #2563eb;
-        }
-
-    )");
-
-    title.setStyleSheet("font-size:20px; font-weight:bold;");
-    resultLabel.setStyleSheet(
-        "background:white; padding:10px; border:1px solid #ddd; border-radius:6px;"
-    );
+    // Adding to main layout
+    layout->addWidget(title);
+    layout->addWidget(subtitle);
+    layout->addSpacing(20);
+    layout->addWidget(catCombo);
+    layout->addWidget(factorCombo);
+    layout->addWidget(methodCombo);
+    layout->addSpacing(10);
+    layout->addWidget(btn, 0, Qt::AlignCenter);
+    layout->addSpacing(20);
+    layout->addLayout(resLayout);
+    layout->addLayout(runLayout);
 
     window.show();
-
     return app.exec();
 }
 

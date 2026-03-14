@@ -235,8 +235,6 @@ void quick_sort(vector<Course>& courses,int low,int high,string factor) {
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    // Load Data once
-    // Use the FULL path from your E: drive based on your screenshot
     vector<Course> allCourses = importCSV("E:/DSA Project2/cmake-build-debug/Data/gen_ed_courses_500k.csv");
 
     QWidget window;
@@ -244,7 +242,7 @@ int main(int argc, char *argv[]) {
     window.setMinimumSize(1000, 800);
 
     window.setStyleSheet(
-    // Global text and background
+
     "* {"
     "   color: #2c3e50;"
     "   font-family: 'Segoe UI', sans-serif;"
@@ -253,7 +251,7 @@ int main(int argc, char *argv[]) {
     "   background-color: #fdfdfd;"
     "}"
 
-    // Header
+
     "QLabel#Title {"
     "   color: #2980b9;"
     "   font-size: 32pt;"
@@ -261,7 +259,7 @@ int main(int argc, char *argv[]) {
     "   margin-bottom: 10px;"
     "}"
 
-    // Inputs and Dropdowns
+
     "QComboBox, QLineEdit, QTextEdit {"
     "   border: 2px solid #bdc3c7;"
     "   border-radius: 8px;"
@@ -273,10 +271,10 @@ int main(int argc, char *argv[]) {
     "   border: 2px solid #3498db;"
     "}"
     "QComboBox::drop-down {"
-    "   border: 0px;" // Removes default arrow box
+    "   border: 0px;"
     "}"
 
-    // The Action Button
+
     "QPushButton {"
     "   background-color: #3498db;"
     "   color: white;"
@@ -292,7 +290,7 @@ int main(int argc, char *argv[]) {
     "   background-color: #1f6391;"
     "}"
 
-    // Results Area
+
     "QTextEdit {"
     "   background-color: #f9f9f9;"
     "   font-family: 'Consolas', 'Monaco', monospace;" // Monospace for better list alignment
@@ -300,7 +298,7 @@ int main(int argc, char *argv[]) {
     "   line-height: 1.5;"
     "}"
 
-    // Runtime Label
+
     "QLabel#RuntimeLabel {"
     "   font-size: 10pt;"
     "   color: #7f8c8d;"
@@ -322,14 +320,14 @@ int main(int argc, char *argv[]) {
     QComboBox *factorCombo = new QComboBox();
     factorCombo->addItems({"Select factor", "Sort by: Average GPA","Sort by: Workload", "Sort by: Overall Rating", "Sort by: Personal Preference"});
 
-    // New Algorithm Dropdown
+
     QComboBox *algoCombo = new QComboBox();
     algoCombo->addItems({"Select Algorithm", "Quick Sort", "Merge Sort"});
 
     QPushButton *btn = new QPushButton("Find Top 10 Recommendations");
     btn->setFixedWidth(400);
 
-    // Results and Runtime area
+
     QTextEdit *resArea = new QTextEdit();
     resArea->setPlaceholderText("Results will appear here...");
     resArea->setReadOnly(true);

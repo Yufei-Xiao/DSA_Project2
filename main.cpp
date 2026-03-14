@@ -51,7 +51,76 @@ vector<Course> importCSV(string filename) {
     }
     return courses;
 }
+void merge(vector<Course>& courses, int left,int middle, int right,string factor) {
+    int size1=middle+1-left;
+    int size2=right-middle;
+    Course* X=new Course[size1];
+    Course* Y=new Course[size2];
+    for (int i=0;i<size1;i++) {
+        X[i]=courses[left+i];
+    }
+    for (int j=0;j<size2;j++) {
+        Y[j]=courses[middle+1+j];
+    }
+    int k=left;
+    int i=0;
+    int j=0;
+    if (factor=="GPA"){
+        while (i<size1 && j<size2) {
+            if (X[i].avg_gpa>=Y[j].avg_gpa) {
+                courses[k]=X[i];
+                i++;
+            }else if (X[i].avg_gpa<Y[j].avg_gpa) {
+                courses[k]=Y[j];
+                j++;
+            }
+            k++;
+        }
+    }else if (factor=="Workload") {
+        while (i<size1 && j<size2) {
+            if (X[i].workload_hours<=Y[j].workload_hours) {
+                courses[k]=X[i];
+                i++;
+            }else if (X[i].workload_hours>Y[j] .workload_hours) {
+                courses[k]=Y[j];
+                j++;
+            }
+            k++;
+        }
+    }else if (factor=="Rating") {
+        while (i<size1 && j<size2) {
+            if (X[i].overall_rating>=Y[j].overall_rating) {
+                courses[k]=X[i];
+                i++;
+            }else if (X[i].overall_rating<Y[j].overall_rating) {
+                courses[k]=Y[j];
+                j++;
+            }
+            k++;
+        }
+    }
+    while (i<size1) {
+        courses[k]=X[i];
+        k++;
+        i++;
+    }
+    while (j<size2) {
+        courses[k]=Y[j];
+        k++;
+        j++;
+    }
+    delete[] X;
+    delete[] Y;
 
+}
+void merge_sort(vector<Course>& courses,int left,int right,string factor) {
+    if (left<right) {
+        int middle = left+(right-left)/2;
+        merge_sort(courses, left, middle,factor);
+        merge_sort(courses, middle+1, right,factor);
+        merge(courses,left,middle,right,factor);
+    }
+}
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -141,7 +210,7 @@ int main(int argc, char *argv[]) {
     catCombo->addItems({"Choose Category", "Math", "Humanities", "Social Sciences", "Physical Science", "Biological Sciences"});
 
     QComboBox *factorCombo = new QComboBox();
-    factorCombo->addItems({"Sort by: Overall Rating", "Sort by: Avg GPA", "Sort by: Workload", "Sort by: Course Rating"});
+    factorCombo->addItems({"Sort by: Overall Rating", "Sort by: Avg GPA", "Sort by: Workload", "Sort by: Overall Rating"});
 
     // New Algorithm Dropdown
     QComboBox *algoCombo = new QComboBox();
@@ -174,10 +243,10 @@ int main(int argc, char *argv[]) {
     layout->addWidget(runLabel);
 
     QObject::connect(btn, &QPushButton::clicked, [&]() {
-        auto start = high_resolution_clock::now();
 
         string selectedCat = catCombo->currentText().toStdString();
         string selectedFactor = factorCombo->currentText().toStdString();
+        string selectedAlgorithm = algoCombo->currentText().toStdString();
 
         if (catCombo->currentIndex() == 0) {
             resArea->setText("Please select a category first.");
@@ -188,31 +257,40 @@ int main(int argc, char *argv[]) {
         for (const auto& c : allCourses) {
             if (c.category == selectedCat) filtered.push_back(c);
         }
-
+        auto start = high_resolution_clock::now();
         // Sort
-        sort(filtered.begin(), filtered.end(), [&](const Course& a, const Course& b) {
-            if (selectedFactor == "Sort by: Avg GPA") return a.avg_gpa > b.avg_gpa;
-            if (selectedFactor == "Sort by: Workload") return a.workload_hours < b.workload_hours;
-            if (selectedFactor == "Sort by: Course Rating") return a.course_rating > b.course_rating;
-            return a.overall_rating > b.overall_rating;
-        });
-
+        if (selectedFactor=="Sort by: Avg GPA") {
+            if (selectedAlgorithm == "Merge Sort") {
+                merge_sort(filtered,0,filtered.size()-1,"GPA");
+            }
+        }else if (selectedFactor=="Sort by: Workload") {
+            if (selectedAlgorithm == "Merge Sort") {
+                merge_sort(filtered,0,filtered.size()-1,"Workload");
+            }
+        }else if (selectedFactor=="Sort by: Overall Rating") {
+            if (selectedAlgorithm == "Merge Sort") {
+                merge_sort(filtered,0,filtered.size()-1,"Rating");
+            }
+        }
+        auto end = high_resolution_clock::now();
         // Display Top 10
         QString displayBuffer = "";
         int limit = min((int)filtered.size(), 10);
 
         for (int i = 0; i < limit; ++i) {
-            displayBuffer += QString("%1. [%2] %3 - %4 (Score: %5)\n")
+            displayBuffer += QString("%1. [%2] %3 - %4 Average GPA:%5 Workload:%6 (Overall Rating: %7)\n")
                 .arg(i + 1)
                 .arg(QString::fromStdString(filtered[i].course_code))
                 .arg(QString::fromStdString(filtered[i].course_name))
                 .arg(QString::fromStdString(filtered[i].university))
+            .arg(filtered[i].avg_gpa)
+            .arg(filtered[i].workload_hours)
                 .arg(filtered[i].overall_rating);
         }
 
         resArea->setText(displayBuffer);
 
-        auto end = high_resolution_clock::now();
+
         auto duration = duration_cast<milliseconds>(end - start);
         runLabel->setText(QString::number(duration.count()) + " ms");
     });

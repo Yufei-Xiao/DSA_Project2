@@ -8,6 +8,9 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QDebug>
+#include <QDialog>
+#include <QSpinBox>
+#include <QMessageBox>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -93,6 +96,17 @@ void merge(vector<Course>& courses, int left,int middle, int right,string factor
                 courses[k]=X[i];
                 i++;
             }else if (X[i].overall_rating<Y[j].overall_rating) {
+                courses[k]=Y[j];
+                j++;
+            }
+            k++;
+        }
+    }else if (factor=="Personal Preference") {
+        while (i<size1 && j<size2) {
+            if (X[i].personal_rating>=Y[j].personal_rating) {
+                courses[k]=X[i];
+                i++;
+            }else if (X[i].personal_rating<Y[j].personal_rating) {
                 courses[k]=Y[j];
                 j++;
             }
@@ -210,7 +224,7 @@ int main(int argc, char *argv[]) {
     catCombo->addItems({"Choose Category", "Math", "Humanities", "Social Sciences", "Physical Science", "Biological Sciences"});
 
     QComboBox *factorCombo = new QComboBox();
-    factorCombo->addItems({"Sort by: Overall Rating", "Sort by: Avg GPA", "Sort by: Workload", "Sort by: Overall Rating"});
+    factorCombo->addItems({"Select factor", "Sort by: Average GPA","Sort by: Workload", "Sort by: Overall Rating", "Sort by: Personal Preference"});
 
     // New Algorithm Dropdown
     QComboBox *algoCombo = new QComboBox();
@@ -242,6 +256,65 @@ int main(int argc, char *argv[]) {
     layout->addWidget(resArea);
     layout->addWidget(runLabel);
 
+    float gpaWeight=0;
+    float ratingWeight=0;
+    float workloadWeight=0;
+    QObject::connect(factorCombo, &QComboBox::currentTextChanged, [&](const QString &text){
+        while(text == "Sort by: Personal Preference") {
+
+            QDialog dialog;
+            dialog.setWindowTitle("Set Ranking Weights");
+
+            QVBoxLayout layout(&dialog);
+
+            QLabel gpaLabel("GPA Weight (%)");
+            QLabel ratingLabel("Professor Rating Weight (%)");
+            QLabel workloadLabel("Workload Weight (%)");
+
+            QSpinBox gpaBox;
+            QSpinBox ratingBox;
+            QSpinBox workloadBox;
+
+            gpaBox.setRange(0,100);
+            ratingBox.setRange(0,100);
+            workloadBox.setRange(0,100);
+
+            gpaBox.setValue(40);
+            ratingBox.setValue(40);
+            workloadBox.setValue(20);
+
+            QPushButton confirm("Confirm");
+
+            layout.addWidget(&gpaLabel);
+            layout.addWidget(&gpaBox);
+            layout.addWidget(&ratingLabel);
+            layout.addWidget(&ratingBox);
+            layout.addWidget(&workloadLabel);
+            layout.addWidget(&workloadBox);
+            layout.addWidget(&confirm);
+
+            QObject::connect(&confirm, &QPushButton::clicked, &dialog, &QDialog::accept);
+
+            if(dialog.exec() == QDialog::Accepted){
+
+                int g = gpaBox.value();
+                int r = ratingBox.value();
+                int w = workloadBox.value();
+
+                if(g + r + w != 100){
+                    QMessageBox::warning(&window, "Invalid Input", "Weights must sum to 100%");
+                    continue;
+                }else {
+                    break;
+                }
+
+                gpaWeight = g / 100.0;
+                ratingWeight = r / 100.0;
+                workloadWeight = w / 100.0;
+            }
+        }
+
+    });
     QObject::connect(btn, &QPushButton::clicked, [&]() {
 
         string selectedCat = catCombo->currentText().toStdString();
@@ -252,14 +325,23 @@ int main(int argc, char *argv[]) {
             resArea->setText("Please select a category first.");
             return;
         }
+        if (factorCombo->currentIndex() == 0) {
+            resArea->setText("Please select a factor first.");
+            return;
+        }
+        if (algoCombo->currentIndex() == 0) {
+            resArea->setText("Please select an algorithm first.");
+            return;
+        }
 
         vector<Course> filtered;
-        for (const auto& c : allCourses) {
+        for (auto& c : allCourses) {
+            c.personal_rating=c.avg_gpa*gpaWeight/4.0+c.professor_rating*ratingWeight/5.0-c.workload_hours*workloadWeight/15;
             if (c.category == selectedCat) filtered.push_back(c);
         }
         auto start = high_resolution_clock::now();
         // Sort
-        if (selectedFactor=="Sort by: Avg GPA") {
+        if (selectedFactor=="Sort by: Average GPA") {
             if (selectedAlgorithm == "Merge Sort") {
                 merge_sort(filtered,0,filtered.size()-1,"GPA");
             }
@@ -271,6 +353,10 @@ int main(int argc, char *argv[]) {
             if (selectedAlgorithm == "Merge Sort") {
                 merge_sort(filtered,0,filtered.size()-1,"Rating");
             }
+        }else if (selectedFactor=="Sort by: Personal Preference") {
+            if (selectedAlgorithm == "Merge Sort") {
+                merge_sort(filtered,0,filtered.size()-1,"Personal Preference");
+            }
         }
         auto end = high_resolution_clock::now();
         // Display Top 10
@@ -278,13 +364,14 @@ int main(int argc, char *argv[]) {
         int limit = min((int)filtered.size(), 10);
 
         for (int i = 0; i < limit; ++i) {
-            displayBuffer += QString("%1. [%2] %3 - %4 Average GPA:%5 Workload:%6 (Overall Rating: %7)\n")
+            displayBuffer += QString("%1. [%2] %3 - %4 Average GPA:%5 Workload:%6 Professor Rating:%7 (Overall Rating: %8)\n")
                 .arg(i + 1)
                 .arg(QString::fromStdString(filtered[i].course_code))
                 .arg(QString::fromStdString(filtered[i].course_name))
                 .arg(QString::fromStdString(filtered[i].university))
-            .arg(filtered[i].avg_gpa)
-            .arg(filtered[i].workload_hours)
+                .arg(filtered[i].avg_gpa)
+                .arg(filtered[i].workload_hours)
+                .arg(filtered[i].professor_rating)
                 .arg(filtered[i].overall_rating);
         }
 

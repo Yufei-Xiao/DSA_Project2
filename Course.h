@@ -16,7 +16,7 @@ struct Course{
     float course_rating;
     float professor_rating;
     float overall_rating;
-
+    float personal_rating;
 };
 
 

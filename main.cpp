@@ -135,7 +135,103 @@ void merge_sort(vector<Course>& courses,int left,int right,string factor) {
         merge(courses,left,middle,right,factor);
     }
 }
-
+int partition(vector<Course>& courses,int low,int high,string factor) {
+    int up=low;
+    int down=high;
+    Course pivot=courses[low];
+    if (factor=="GPA") {
+        while (up<down) {
+            for (int i=up;i<high;i++) {
+                if (courses[up].avg_gpa<pivot.avg_gpa) {
+                    break;
+                }
+                up++;
+            }
+            for (int i=down;i>low;i--) {
+                if (courses[down].avg_gpa>pivot.avg_gpa) {
+                    break;
+                }
+                down--;
+            }
+            if (up<down) {
+                Course temp=courses[up];
+                courses[up]=courses[down];
+                courses[down]=temp;
+            }
+        }
+    }else if (factor=="Workload") {
+        while (up<down) {
+            for (int i=up;i<high;i++) {
+                if (courses[up].workload_hours>pivot.workload_hours) {
+                    break;
+                }
+                up++;
+            }
+            for (int i=down;i>low;i--) {
+                if (courses[down].workload_hours<pivot.workload_hours) {
+                    break;
+                }
+                down--;
+            }
+            if (up<down) {
+                Course temp=courses[up];
+                courses[up]=courses[down];
+                courses[down]=temp;
+            }
+        }
+    }else if (factor=="Rating") {
+        while (up<down) {
+            for (int i=up;i<high;i++) {
+                if (courses[up].overall_rating<pivot.overall_rating) {
+                    break;
+                }
+                up++;
+            }
+            for (int i=down;i>low;i--) {
+                if (courses[down].overall_rating>pivot.overall_rating) {
+                    break;
+                }
+                down--;
+            }
+            if (up<down) {
+                Course temp=courses[up];
+                courses[up]=courses[down];
+                courses[down]=temp;
+            }
+        }
+    }else if (factor=="Personal Preference") {
+        while (up<down) {
+            for (int i=up;i<high;i++) {
+                if (courses[up].personal_rating<pivot.personal_rating) {
+                    break;
+                }
+                up++;
+            }
+            for (int i=down;i>low;i--) {
+                if (courses[down].personal_rating>pivot.personal_rating) {
+                    break;
+                }
+                down--;
+            }
+            if (up<down) {
+                Course temp=courses[up];
+                courses[up]=courses[down];
+                courses[down]=temp;
+            }
+        }
+    }
+    Course temp=courses[down];
+    courses[down]=courses[low];
+    courses[low]=temp;
+    return down;
+}
+void quick_sort(vector<Course>& courses,int low,int high,string factor) {
+    if (low<high) {
+        int pivot=partition(courses,low,high,factor);
+        quick_sort(courses,low,pivot-1,factor);
+        quick_sort(courses,pivot+1,high,factor);
+    }
+}
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
@@ -240,6 +336,8 @@ int main(int argc, char *argv[]) {
 
     QLabel *runLabel = new QLabel("Execution Time: -- ms");
     runLabel->setObjectName("RuntimeLabel");
+    QLabel *sizeLabel = new QLabel("");
+    sizeLabel->setObjectName("SizeLabel");
 
 
     layout->addWidget(title);
@@ -254,7 +352,11 @@ int main(int argc, char *argv[]) {
     layout->addSpacing(10);
     layout->addWidget(new QLabel("Top 10 Results:"));
     layout->addWidget(resArea);
+    layout->addWidget(new QLabel("Runtime:"));
     layout->addWidget(runLabel);
+    layout->addWidget(new QLabel("Data Size:"));
+    layout->addWidget(sizeLabel);
+
 
     float gpaWeight=0;
     float ratingWeight=0;
@@ -305,12 +407,13 @@ int main(int argc, char *argv[]) {
                     QMessageBox::warning(&window, "Invalid Input", "Weights must sum to 100%");
                     continue;
                 }else {
+                    gpaWeight = g / 100.0;
+                    ratingWeight = r / 100.0;
+                    workloadWeight = w / 100.0;
                     break;
                 }
 
-                gpaWeight = g / 100.0;
-                ratingWeight = r / 100.0;
-                workloadWeight = w / 100.0;
+
             }
         }
 
@@ -336,7 +439,7 @@ int main(int argc, char *argv[]) {
 
         vector<Course> filtered;
         for (auto& c : allCourses) {
-            c.personal_rating=c.avg_gpa*gpaWeight/4.0+c.professor_rating*ratingWeight/5.0-c.workload_hours*workloadWeight/15;
+            c.personal_rating=c.avg_gpa*gpaWeight/4.0+c.professor_rating*ratingWeight/5.0-c.workload_hours*workloadWeight/15.0;
             if (c.category == selectedCat) filtered.push_back(c);
         }
         auto start = high_resolution_clock::now();
@@ -344,18 +447,26 @@ int main(int argc, char *argv[]) {
         if (selectedFactor=="Sort by: Average GPA") {
             if (selectedAlgorithm == "Merge Sort") {
                 merge_sort(filtered,0,filtered.size()-1,"GPA");
+            }else if (selectedAlgorithm == "Quick Sort") {
+                quick_sort(filtered,0,filtered.size()-1,"GPA");
             }
         }else if (selectedFactor=="Sort by: Workload") {
             if (selectedAlgorithm == "Merge Sort") {
                 merge_sort(filtered,0,filtered.size()-1,"Workload");
+            }else if (selectedAlgorithm == "Quick Sort") {
+                quick_sort(filtered,0,filtered.size()-1,"Workload");
             }
         }else if (selectedFactor=="Sort by: Overall Rating") {
             if (selectedAlgorithm == "Merge Sort") {
                 merge_sort(filtered,0,filtered.size()-1,"Rating");
+            }else if (selectedAlgorithm == "Quick Sort") {
+                quick_sort(filtered,0,filtered.size()-1,"Rating");
             }
         }else if (selectedFactor=="Sort by: Personal Preference") {
             if (selectedAlgorithm == "Merge Sort") {
                 merge_sort(filtered,0,filtered.size()-1,"Personal Preference");
+            }else if (selectedAlgorithm == "Quick Sort") {
+                quick_sort(filtered,0,filtered.size()-1,"Personal Preference");
             }
         }
         auto end = high_resolution_clock::now();
@@ -380,6 +491,7 @@ int main(int argc, char *argv[]) {
 
         auto duration = duration_cast<milliseconds>(end - start);
         runLabel->setText(QString::number(duration.count()) + " ms");
+        sizeLabel->setText(QString::number(filtered.size()));
     });
 
     window.show();

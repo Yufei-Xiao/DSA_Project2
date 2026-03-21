@@ -242,37 +242,36 @@ int main(int argc, char *argv[]) {
     window.setMinimumSize(1500, 1200);
 
     window.setStyleSheet(
-    /* Global Reset - Force light background and dark text */
     "* {"
     "   color: #2c3e50;"
     "   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;"
     "}"
     "QWidget {"
-    "   background-color: #ffffff;" /* Pure white background for clarity */
+    "   background-color: #ffffff;"
     "}"
 
-    /* Header Title - Made much larger and more impactful */
+
     "QLabel#Title {"
     "   color: #2980b9;"
-    "   font-size: 42pt;" /* Increased from 32pt */
+    "   font-size: 42pt;"
     "   font-weight: 900;"
-    "   letter-spacing: -1px;" /* Tighter letters look more modern */
+    "   letter-spacing: -1px;"
     "   margin-top: 20px;"
     "   margin-bottom: 20px;"
     "}"
 
-    /* Step Labels - Made bold and uppercase for hierarchy */
+
     "QLabel {"
     "   font-size: 14pt;"
     "   font-weight: 700;"
     "   color: #34495e;"
     "}"
 
-    /* Inputs - Increased padding and font size */
+
     "QComboBox, QLineEdit, QTextEdit {"
     "   border: 2px solid #bdc3c7;"
     "   border-radius: 10px;"
-    "   padding: 12px 20px;" /* More "cushion" inside the box */
+    "   padding: 12px 20px;"
     "   background-color: #ffffff;"
     "   font-size: 13pt;"
     "   selection-background-color: #3498db;"
@@ -281,31 +280,31 @@ int main(int argc, char *argv[]) {
     "   border: 2px solid #3498db;"
     "}"
 
-    /* The Button - Made it a "Call to Action" */
+
     "QPushButton {"
     "   background-color: #3498db;"
     "   color: white;"
-    "   font-size: 16pt;" /* Bigger font */
+    "   font-size: 16pt;"
     "   font-weight: 800;"
     "   border-radius: 12px;"
-    "   padding: 18px;" /* Chunkier button */
+    "   padding: 18px;"
     "   min-width: 300px;"
     "}"
     "QPushButton:hover {"
     "   background-color: #2980b9;"
     "}"
 
-    /* Results Area - Clean, readable monospace */
+
     "QTextEdit#ResultsArea {"
-    "   background-color: #f9fbfd;" /* Very slight blue tint to distinguish it */
+    "   background-color: #f9fbfd;"
     "   border: 2px solid #dcdde1;"
     "   font-family: 'Consolas', 'Monaco', monospace;"
-    "   font-size: 14pt;" /* Much easier to read 500k records */
-    "   line-height: 1.8;" /* Adds space between lines of data */
+    "   font-size: 14pt;"
+    "   line-height: 1.8;"
     "   color: #2f3640;"
     "}"
 
-    /* Runtime Stats */
+
     "QLabel#RuntimeLabel {"
     "   font-size: 12pt;"
     "   color: #7f8c8d;"
@@ -372,6 +371,39 @@ int main(int argc, char *argv[]) {
 
             QDialog dialog;
             dialog.setWindowTitle("Set Ranking Weights");
+            dialog.setMinimumWidth(400);
+            dialog.setStyleSheet(
+                "QDialog { background-color: #ffffff; border: 3px solid #3498db; border-radius: 15px; }"
+
+                "QLabel { "
+                "   font-size: 16pt; font-weight: 800; color: #2c3e50; margin-top: 10px; "
+                "}"
+
+                "QSpinBox { "
+                "   background-color: #f8fafc; "
+                "   color: #1e293b; "
+                "   border: 2px solid #bdc3c7; "
+                "   border-radius: 10px; "
+                "   padding: 12px; "
+                "   font-size: 20pt; "
+                "   font-weight: bold; "
+                "   qproperty-alignment: 'AlignCenter'; "
+                "}"
+                "QSpinBox:focus { border: 2px solid #3498db; background-color: #ffffff; }"
+
+
+                "QSpinBox::up-button, QSpinBox::down-button { "
+                "   width: 0px; "
+                "   height: 0px; "
+                "   border: none; "
+                "}"
+
+                "QPushButton { "
+                "   background-color: #27ae60; color: #ffffff; font-size: 16pt; "
+                "   font-weight: 900; border-radius: 10px; padding: 20px; margin-top: 20px; "
+                "}"
+                "QPushButton:hover { background-color: #2ecc71; }"
+            );
 
             QVBoxLayout layout(&dialog);
 
@@ -481,7 +513,7 @@ int main(int argc, char *argv[]) {
         int limit = min((int)filtered.size(), 10);
 
         for (int i = 0; i < limit; ++i) {
-            displayBuffer += QString("%1. [%2] %3 - %4 Average GPA:%5 Workload:%6 Professor Rating:%7 (Overall Rating: %8)\n")
+            displayBuffer += QString("%1. %2  %3 - %4  Average GPA:%5  Workload:%6  Professor Rating:%7  (Overall Rating: %8)\n")
                 .arg(i + 1)
                 .arg(QString::fromStdString(filtered[i].course_code))
                 .arg(QString::fromStdString(filtered[i].course_name))

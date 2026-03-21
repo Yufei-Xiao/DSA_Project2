@@ -239,69 +239,77 @@ int main(int argc, char *argv[]) {
 
     QWidget window;
     window.setWindowTitle("Sunshine Scholar");
-    window.setMinimumSize(1000, 800);
+    window.setMinimumSize(1500, 1200);
 
     window.setStyleSheet(
-
+    /* Global Reset - Force light background and dark text */
     "* {"
     "   color: #2c3e50;"
-    "   font-family: 'Segoe UI', sans-serif;"
+    "   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;"
     "}"
     "QWidget {"
-    "   background-color: #fdfdfd;"
+    "   background-color: #ffffff;" /* Pure white background for clarity */
     "}"
 
-
+    /* Header Title - Made much larger and more impactful */
     "QLabel#Title {"
     "   color: #2980b9;"
-    "   font-size: 32pt;"
+    "   font-size: 42pt;" /* Increased from 32pt */
     "   font-weight: 900;"
-    "   margin-bottom: 10px;"
+    "   letter-spacing: -1px;" /* Tighter letters look more modern */
+    "   margin-top: 20px;"
+    "   margin-bottom: 20px;"
     "}"
 
+    /* Step Labels - Made bold and uppercase for hierarchy */
+    "QLabel {"
+    "   font-size: 14pt;"
+    "   font-weight: 700;"
+    "   color: #34495e;"
+    "}"
 
+    /* Inputs - Increased padding and font size */
     "QComboBox, QLineEdit, QTextEdit {"
     "   border: 2px solid #bdc3c7;"
-    "   border-radius: 8px;"
-    "   padding: 8px 15px;"
+    "   border-radius: 10px;"
+    "   padding: 12px 20px;" /* More "cushion" inside the box */
     "   background-color: #ffffff;"
+    "   font-size: 13pt;"
     "   selection-background-color: #3498db;"
     "}"
     "QComboBox:hover, QLineEdit:hover {"
     "   border: 2px solid #3498db;"
     "}"
-    "QComboBox::drop-down {"
-    "   border: 0px;"
-    "}"
 
-
+    /* The Button - Made it a "Call to Action" */
     "QPushButton {"
     "   background-color: #3498db;"
     "   color: white;"
-    "   font-weight: bold;"
-    "   border-radius: 8px;"
-    "   padding: 12px;"
-    "   min-width: 200px;"
+    "   font-size: 16pt;" /* Bigger font */
+    "   font-weight: 800;"
+    "   border-radius: 12px;"
+    "   padding: 18px;" /* Chunkier button */
+    "   min-width: 300px;"
     "}"
     "QPushButton:hover {"
     "   background-color: #2980b9;"
     "}"
-    "QPushButton:pressed {"
-    "   background-color: #1f6391;"
+
+    /* Results Area - Clean, readable monospace */
+    "QTextEdit#ResultsArea {"
+    "   background-color: #f9fbfd;" /* Very slight blue tint to distinguish it */
+    "   border: 2px solid #dcdde1;"
+    "   font-family: 'Consolas', 'Monaco', monospace;"
+    "   font-size: 14pt;" /* Much easier to read 500k records */
+    "   line-height: 1.8;" /* Adds space between lines of data */
+    "   color: #2f3640;"
     "}"
 
-
-    "QTextEdit {"
-    "   background-color: #f9f9f9;"
-    "   font-family: 'Consolas', 'Monaco', monospace;" // Monospace for better list alignment
-    "   font-size: 11pt;"
-    "   line-height: 1.5;"
-    "}"
-
-
+    /* Runtime Stats */
     "QLabel#RuntimeLabel {"
-    "   font-size: 10pt;"
+    "   font-size: 12pt;"
     "   color: #7f8c8d;"
+    "   font-weight: 400;"
     "   font-style: italic;"
     "}"
 );
@@ -491,7 +499,7 @@ int main(int argc, char *argv[]) {
         runLabel->setText(QString::number(duration.count()) + " ms");
         sizeLabel->setText(QString::number(filtered.size()));
     });
-
+    window.showMaximized();
     window.show();
     return app.exec();
 }

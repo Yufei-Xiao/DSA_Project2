@@ -11,6 +11,7 @@
 #include <QDialog>
 #include <QSpinBox>
 #include <QMessageBox>
+#include <QDir>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -20,6 +21,13 @@
 #include "Course.h"
 using namespace std;
 using namespace std::chrono;
+
+namespace {
+    string resolveCsvPath() {
+        const QString relativePath = QDir(QCoreApplication::applicationDirPath()).filePath("Data/gen_ed_courses_500k.csv");
+        return relativePath.toStdString();
+    }
+}
 
 vector<Course> importCSV(string filename) {
     vector<Course> courses;
@@ -231,7 +239,7 @@ void quick_sort(vector<Course>& courses,int low,int high,string factor) {
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    vector<Course> allCourses = importCSV("E:/DSA Project2/cmake-build-debug/Data/gen_ed_courses_500k.csv");
+    vector<Course> allCourses = importCSV(resolveCsvPath());
 
     QWidget window;
     window.setWindowTitle("Sunshine Scholar");
@@ -332,6 +340,7 @@ int main(int argc, char *argv[]) {
 
 
     QTextEdit *resArea = new QTextEdit();
+    resArea->setObjectName("ResultsArea");
     resArea->setPlaceholderText("Results will appear here...");
     resArea->setReadOnly(true);
 

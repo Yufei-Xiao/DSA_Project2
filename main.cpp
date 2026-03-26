@@ -22,19 +22,15 @@ using namespace std;
 using namespace std::chrono;
 
 vector<Course> importCSV(string filename) {
-
     vector<Course> courses;
     courses.reserve(500000);
     ifstream file(filename);
-
     if (!file.is_open()) {
         qDebug() << "Error: Could not find CSV file!";
         return courses;
     }
-
     string line, temp;
     getline(file, line);
-
     while (getline(file, line)) {
         stringstream ss(line);
         Course c;
@@ -367,7 +363,10 @@ int main(int argc, char *argv[]) {
     float ratingWeight=0;
     float workloadWeight=0;
     QObject::connect(factorCombo, &QComboBox::currentTextChanged, [&](const QString &text){
-        while(text == "Sort by: Personal Preference") {
+        if (text != "Sort by: Personal Preference") {
+            return;
+        }
+        while(true) {
 
             QDialog dialog;
             dialog.setWindowTitle("Set Ranking Weights");
@@ -434,25 +433,28 @@ int main(int argc, char *argv[]) {
             layout.addWidget(&confirm);
 
             QObject::connect(&confirm, &QPushButton::clicked, &dialog, &QDialog::accept);
-
-            if(dialog.exec() == QDialog::Accepted){
-
-                int g = gpaBox.value();
-                int r = ratingBox.value();
-                int w = workloadBox.value();
-
-                if(g + r + w != 100){
-                    QMessageBox::warning(&window, "Invalid Input", "Weights must sum to 100%");
-                    continue;
-                }else {
-                    gpaWeight = g / 100.0;
-                    ratingWeight = r / 100.0;
-                    workloadWeight = w / 100.0;
-                    break;
-                }
-
-
+            if (dialog.exec() != QDialog::Accepted) {
+                factorCombo->setCurrentIndex(0);
+                return;
             }
+
+
+            int g = gpaBox.value();
+            int r = ratingBox.value();
+            int w = workloadBox.value();
+
+            if(g + r + w != 100){
+                QMessageBox::warning(&window, "Invalid Input", "Weights must sum to 100%");
+                continue;
+            }else {
+                gpaWeight = g / 100.0;
+                ratingWeight = r / 100.0;
+                workloadWeight = w / 100.0;
+                break;
+            }
+
+
+
         }
 
     });

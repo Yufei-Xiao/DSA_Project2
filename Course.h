@@ -1,5 +1,3 @@
-
-
 #ifndef DSA_PROJECT2_COURSE_H
 #define DSA_PROJECT2_COURSE_H
 #include <string>

@@ -1,6 +1,6 @@
 #include <QApplication>
-#include <QWidget>
 #include <QVBoxLayout>
+#include <QWidget>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QComboBox>

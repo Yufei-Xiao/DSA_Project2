@@ -139,7 +139,96 @@ void merge_sort(vector<Course>& courses,int left,int right,string factor) {
         merge(courses,left,middle,right,factor);
     }
 }
-
+int partition(vector<Course>& courses,int low,int high,string factor) {
+    int up=low;
+    int down=high;
+    Course pivot=courses[low];
+    if (factor=="GPA") {
+        while (up<down) {
+            for (int i=up;i<high;i++) {
+                if (courses[up].avg_gpa<pivot.avg_gpa) {
+                    break;
+                }
+                up++;
+            }
+            for (int i=down;i>low;i--) {
+                if (courses[down].avg_gpa>pivot.avg_gpa) {
+                    break;
+                }
+                down--;
+            }
+            if (up<down) {
+                Course temp=courses[up];
+                courses[up]=courses[down];
+                courses[down]=temp;
+            }
+        }
+    }else if (factor=="Workload") {
+        while (up<down) {
+            for (int i=up;i<high;i++) {
+                if (courses[up].workload_hours>pivot.workload_hours) {
+                    break;
+                }
+                up++;
+            }
+            for (int i=down;i>low;i--) {
+                if (courses[down].workload_hours<pivot.workload_hours) {
+                    break;
+                }
+                down--;
+            }
+            if (up<down) {
+                Course temp=courses[up];
+                courses[up]=courses[down];
+                courses[down]=temp;
+            }
+        }
+    }else if (factor=="Rating") {
+        while (up<down) {
+            for (int i=up;i<high;i++) {
+                if (courses[up].overall_rating<pivot.overall_rating) {
+                    break;
+                }
+                up++;
+            }
+            for (int i=down;i>low;i--) {
+                if (courses[down].overall_rating>pivot.overall_rating) {
+                    break;
+                }
+                down--;
+            }
+            if (up<down) {
+                Course temp=courses[up];
+                courses[up]=courses[down];
+                courses[down]=temp;
+            }
+        }
+    }else if (factor=="Personal Preference") {
+        while (up<down) {
+            for (int i=up;i<high;i++) {
+                if (courses[up].personal_rating<pivot.personal_rating) {
+                    break;
+                }
+                up++;
+            }
+            for (int i=down;i>low;i--) {
+                if (courses[down].personal_rating>pivot.personal_rating) {
+                    break;
+                }
+                down--;
+            }
+            if (up<down) {
+                Course temp=courses[up];
+                courses[up]=courses[down];
+                courses[down]=temp;
+            }
+        }
+    }
+    Course temp=courses[down];
+    courses[down]=courses[low];
+    courses[low]=temp;
+    return down;
+}
 void quick_sort(vector<Course>& courses,int low,int high,string factor){
     if (low<high) {
         int pivot=partition(courses,low,high,factor);

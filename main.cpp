@@ -59,87 +59,8 @@ vector<Course> importCSV(string filename) {
     return courses;
 }
 
-void merge(vector<Course>& courses, int left,int middle, int right,string factor) {
-    int size1=middle+1-left;
-    int size2=right-middle;
-    Course* X=new Course[size1];
-    Course* Y=new Course[size2];
-    for (int i=0;i<size1;i++) {
-        X[i]=courses[left+i];
-    }
-    for (int j=0;j<size2;j++) {
-        Y[j]=courses[middle+1+j];
-    }
-    int k=left;
-    int i=0;
-    int j=0;
-    if (factor=="GPA"){
-        while (i<size1 && j<size2) {
-            if (X[i].avg_gpa>=Y[j].avg_gpa) {
-                courses[k]=X[i];
-                i++;
-            }else if (X[i].avg_gpa<Y[j].avg_gpa) {
-                courses[k]=Y[j];
-                j++;
-            }
-            k++;
-        }
-    }else if (factor=="Workload") {
-        while (i<size1 && j<size2) {
-            if (X[i].workload_hours<=Y[j].workload_hours) {
-                courses[k]=X[i];
-                i++;
-            }else if (X[i].workload_hours>Y[j] .workload_hours) {
-                courses[k]=Y[j];
-                j++;
-            }
-            k++;
-        }
-    }else if (factor=="Rating") {
-        while (i<size1 && j<size2) {
-            if (X[i].overall_rating>=Y[j].overall_rating) {
-                courses[k]=X[i];
-                i++;
-            }else if (X[i].overall_rating<Y[j].overall_rating) {
-                courses[k]=Y[j];
-                j++;
-            }
-            k++;
-        }
-    }else if (factor=="Personal Preference") {
-        while (i<size1 && j<size2) {
-            if (X[i].personal_rating>=Y[j].personal_rating) {
-                courses[k]=X[i];
-                i++;
-            }else if (X[i].personal_rating<Y[j].personal_rating) {
-                courses[k]=Y[j];
-                j++;
-            }
-            k++;
-        }
-    }
-    while (i<size1) {
-        courses[k]=X[i];
-        k++;
-        i++;
-    }
-    while (j<size2) {
-        courses[k]=Y[j];
-        k++;
-        j++;
-    }
-    delete[] X;
-    delete[] Y;
 
-}
-void merge_sort(vector<Course>& courses,int left,int right,string factor) {
-    if (left<right) {
-        int middle = left+(right-left)/2;
-        merge_sort(courses, left, middle,factor);
-        merge_sort(courses, middle+1, right,factor);
-        merge(courses,left,middle,right,factor);
-    }
-}
+
 
 int partition(vector<Course>& courses,int low,int high,string factor) {
     int up=low;

@@ -58,6 +58,7 @@ vector<Course> importCSV(string filename) {
     }
     return courses;
 }
+
 void merge(vector<Course>& courses, int left,int middle, int right,string factor) {
     int size1=middle+1-left;
     int size2=right-middle;
@@ -139,6 +140,7 @@ void merge_sort(vector<Course>& courses,int left,int right,string factor) {
         merge(courses,left,middle,right,factor);
     }
 }
+
 int partition(vector<Course>& courses,int low,int high,string factor) {
     int up=low;
     int down=high;

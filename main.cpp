@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QTextEdit>
+#include <QDebug>
 #include <QDialog>
 #include <QSpinBox>
 #include <QMessageBox>

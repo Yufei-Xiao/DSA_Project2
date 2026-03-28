@@ -229,7 +229,7 @@ int partition(vector<Course>& courses,int low,int high,string factor) {
     courses[low]=temp;
     return down;
 }
-void quick_sort(vector<Course>& courses,int low,int high,string factor) {
+void quick_sort(vector<Course>& courses,int low,int high,string factor){
     if (low<high) {
         int pivot=partition(courses,low,high,factor);
         quick_sort(courses,low,pivot-1,factor);

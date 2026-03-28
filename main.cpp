@@ -58,7 +58,6 @@ vector<Course> importCSV(string filename) {
     }
     return courses;
 }
-
 void merge(vector<Course>& courses, int left,int middle, int right,string factor) {
     int size1=middle+1-left;
     int size2=right-middle;
@@ -240,9 +239,7 @@ void quick_sort(vector<Course>& courses,int low,int high,string factor) {
 }
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-
     vector<Course> allCourses = importCSV(resolveCsvPath());
-
     QWidget window;
     window.setWindowTitle("Sunshine Scholar");
     window.setMinimumSize(1500, 1200);
@@ -333,13 +330,11 @@ int main(int argc, char *argv[]) {
     QComboBox *factorCombo = new QComboBox();
     factorCombo->addItems({"Select factor", "Sort by: Average GPA","Sort by: Workload", "Sort by: Overall Rating", "Sort by: Personal Preference"});
 
-
     QComboBox *algoCombo = new QComboBox();
     algoCombo->addItems({"Select Algorithm", "Quick Sort", "Merge Sort"});
 
     QPushButton *btn = new QPushButton("Find Top 10 Recommendations");
     btn->setFixedWidth(400);
-
 
     QTextEdit *resArea = new QTextEdit();
     resArea->setObjectName("ResultsArea");
@@ -368,7 +363,6 @@ int main(int argc, char *argv[]) {
     layout->addWidget(runLabel);
     layout->addWidget(new QLabel("Data Size:"));
     layout->addWidget(sizeLabel);
-
 
     float gpaWeight=0;
     float ratingWeight=0;
@@ -448,7 +442,6 @@ int main(int argc, char *argv[]) {
                 factorCombo->setCurrentIndex(0);
                 return;
             }
-
 
             int g = gpaBox.value();
             int r = ratingBox.value();
@@ -538,7 +531,6 @@ int main(int argc, char *argv[]) {
         }
 
         resArea->setText(displayBuffer);
-
 
         auto duration = duration_cast<milliseconds>(end - start);
         runLabel->setText(QString::number(duration.count()) + " ms");

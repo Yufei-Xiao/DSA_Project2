@@ -139,7 +139,6 @@ void merge_sort(vector<Course>& courses,int left,int right,string factor) {
         merge(courses,left,middle,right,factor);
     }
 }
-
 int partition(vector<Course>& courses,int low,int high,string factor) {
     int up=low;
     int down=high;
